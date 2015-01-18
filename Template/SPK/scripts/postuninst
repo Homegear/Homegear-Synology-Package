@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ "$SYNOPKG_PKG_STATUS" == "UPGRADE" ]; then
+	exit 0
+fi
+
+rm -f /usr/bin/homegear
+rm -Rf /etc/homegear
+rm -Rf /lib/homegear
+rm -Rf /var/run/homegear
+rm -Rf /var/log/homegear
+rm -Rf /var/lib/homegear
+rm -f /etc/logrotate.d/homegear
+rm -f /usr/local/etc/rc.d/homegear.sh
+rm -Rf /usr/syno/etc/packages/Homegear/
+rm -Rf /usr/syno/synoman/webman/3rdparty/Homegear
+
+sed -i '/^homegear:/d' /etc/passwd
+sed -i '/^homegear:/d' /etc/group
+sed -i '/^homegear:/d' /etc/shadow
+
+exit 0

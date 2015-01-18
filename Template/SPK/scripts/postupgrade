@@ -1,0 +1,8 @@
+#!/bin/sh
+
+rm -f /lib/homegear/*
+cp -R /var/packages/Homegear/target/lib/homegear/* /lib/homegear
+chown root:root -R /lib/homegear
+chmod 755 -R /lib/homegear
+
+exit 0

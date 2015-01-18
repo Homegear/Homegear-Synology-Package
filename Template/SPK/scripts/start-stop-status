@@ -1,0 +1,114 @@
+#!/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+CONFIGPATH=/etc/homegear
+DAEMON=/usr/bin/homegear
+PIDPATH=/var/run/homegear
+PIDFILE=$PIDPATH/homegear.pid
+DBPATH=/var/lib/homegear
+LOGPATH=/var/log/homegear
+
+test -x $DAEMON || exit 150
+
+if [ -r /etc/default/homegear ]; then
+        . /etc/default/homegear
+fi
+
+HOMEGEAR_OPTS="$HOMEGEAR_OPTS -d"
+
+RUNASUSER=homegear
+RUNASGROUP=homegear
+
+case $1 in
+        start)
+			killall synousbmodemd
+			STATUS=`ps | grep -c homegear`
+			if [ $STATUS -eq 2 ]; then
+				exit 0
+			fi
+			if test ! -d $PIDPATH; then 
+				mkdir -p $PIDPATH
+			fi
+			chown -R $RUNASUSER:$RUNASGROUP $PIDPATH
+			chmod -R 750 $PIDPATH
+
+			if test ! -d $DBPATH; then 
+				mkdir -p $DBPATH
+			fi
+			chown -R $RUNASUSER:$RUNASGROUP $DBPATH
+			chmod 750 $DBPATH
+			chmod 640 $DBPATH/db.sql
+			chmod 550 $DBPATH/scripts
+			chmod 550 $DBPATH/firmware
+			chmod 440 $DBPATH/firmware/*
+			chmod 550 $DBPATH/firmware/GetFirmwareUpdates.sh
+			chmod -R 550 $DBPATH/modules
+
+			if test ! -d $LOGPATH; then
+				mkdir -p $LOGPATH
+			fi
+			chown -R $RUNASUSER:$RUNASGROUP $LOGPATH
+			chmod -R 750 $LOGPATH
+
+			if test ! -e /etc/homegear/devices/0/rf_s.xml; then
+				XMLLINT=0
+				if test ! -e /usr/bin/xmllint; then
+					XMLLINT=1
+					ln -s /lib/homegear/xmllint /usr/bin/xmllint
+				fi
+				PATCH=0
+				if test ! -e /usr/bin/patch; then
+					PATCH=1
+					ln -s /lib/homegear/patch /usr/bin/patch
+				fi
+				echo "Downloading device description files..."
+				/var/lib/homegear/GetDeviceFiles.sh 1
+				[ $? -ne 0 ] && exit 1
+				echo "Downloading current firmware updates..."
+				/var/lib/homegear/firmware/GetFirmwareUpdates.sh
+				[ $? -ne 0 ] && exit 1
+				if [ $XMLLINT -eq 1 ]; then
+					rm /usr/bin/xmllint
+				fi
+				if [ $PATCH -eq 1 ]; then
+					rm /usr/bin/patch
+				fi
+			fi
+
+			$DAEMON -c $CONFIGPATH -s $RUNASUSER $RUNASGROUP
+
+            $DAEMON -p $PIDFILE $HOMEGEAR_OPTS
+            ;;
+        stop)
+            if test -e $PIDFILE; then
+	        	PID=`cat $PIDFILE`
+	        	PROCESSCOUNT=`ps | grep -c $PID`
+	        	if [ $PROCESSCOUNT -ne 1 ]; then
+	        		kill -15 $PID
+	        	fi
+	        	while [ $PROCESSCOUNT -ne 1 ]; do
+	        		sleep 1
+	        		PROCESSCOUNT=`ps | grep -c $PID`
+	        	done
+			fi
+            ;;
+        status)
+			STATUS=`ps | grep -c homegear`
+			if [ $STATUS -ge 2 ]; then
+				exit 0
+			fi
+			exit 3
+			;;
+		log)
+			echo "/var/log/homegear/homegear.log"
+			;;
+        restart|force-reload)
+                $0 stop && sleep 2 && $0 start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart}"
+                exit 2
+                ;;
+esac
+
+exit 0

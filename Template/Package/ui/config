@@ -1,0 +1,14 @@
+{
+	".url": {
+		"SYNO.SDS.HOMEGEAR": {
+			"type": "url",
+			"allUsers": true,
+			"title": "Homegear",
+			"desc": "Interface your HomeMatic BidCoS, HomeMatic Wired, MAX!, INSTEON or Philips hue devices with your home automation software or your own control scripts.",
+			"icon": "Homegear_{0}.png",
+			"protocol": "http",
+			"url": "/",
+			"port": "2001"
+		}
+	}
+}

@@ -1,0 +1,1 @@
+Build libxml2 (http://xmlsoft.org/downloads.html) and patch (http://ftp.gnu.org/gnu/patch/) with LDFLAGS set to "/lib/homegear" in Makefile and then copy both files to ./Package/lib/homegear.
