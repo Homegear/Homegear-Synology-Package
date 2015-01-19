@@ -44,11 +44,9 @@ chmod -R 550 /var/lib/homegear/firmware
 chmod -R 550 /var/lib/homegear/modules
 chmod 755 /var/lib/homegear/GetDeviceFiles.sh
 
-cp /var/packages/Homegear/target/usr/lib/python2.7/lib-dynload/lzo.so /usr/lib/python2.7/lib-dynload
+cp /var/packages/Homegear/target/lib/homegear/lzo.so /usr/lib/python2.7/lib-dynload
 chown root:root /usr/lib/python2.7/lib-dynload/lzo.so
 chmod 755 /usr/lib/python2.7/lib-dynload/lzo.so
-
-
 
 chmod 440 /etc/homegear/rpcclients.conf
 chown homegear:homegear /etc/homegear/rpcclients.conf

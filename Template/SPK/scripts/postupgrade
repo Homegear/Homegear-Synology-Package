@@ -1,8 +1,37 @@
 #!/bin/sh
 
+cp -R /var/packages/Homegear/target/var/lib/homegear/* /var/lib/homegear
+rm /var/lib/homegear/modules/*
+FILES=/var/lib/homegear/modules/*
+for f in $FILES; do
+	f2=`echo $f | sed 's#.*/##' | sed 's/^lib/mod_/'`
+	mv $f /var/lib/homegear/modules/$f2
+done
+chown -R homegear:homegear /var/lib/homegear
+chmod 750 /var/lib/homegear
+chmod 644 /var/lib/homegear/*
+chmod -R 550 /var/lib/homegear/firmware
+chmod -R 550 /var/lib/homegear/modules
+chmod 755 /var/lib/homegear/GetDeviceFiles.sh
+
+cp /var/packages/Homegear/target/usr/bin/homegear /usr/bin
+chmod 755 /usr/bin/homegear
+chown root:root /usr/bin/homegear
+
+cp /var/packages/Homegear/target/etc/logrotate.d/homegear /etc/logrotate.d
+chown root:root /etc/logrotate.d/homegear
+chmod 644 /logrotate.d/homegear
+
 rm -f /lib/homegear/*
 cp -R /var/packages/Homegear/target/lib/homegear/* /lib/homegear
 chown root:root -R /lib/homegear
 chmod 755 -R /lib/homegear
+cp /var/packages/Homegear/target/lib/homegear/lzo.so /usr/lib/python2.7/lib-dynload
+chown root:root /usr/lib/python2.7/lib-dynload/lzo.so
+chmod 755 /usr/lib/python2.7/lib-dynload/lzo.so
+
+cp /var/packages/Homegear/scripts/start-stop-status /usr/local/etc/rc.d/homegear.sh
+chmod 755 /usr/local/etc/rc.d/homegear.sh
+chown root:root /usr/local/etc/rc.d/homegear.sh
 
 exit 0
