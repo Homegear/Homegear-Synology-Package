@@ -62,6 +62,6 @@ tar -czf package.tgz *
 mv package.tgz ../SPK
 cd ../SPK
 tar -cvf homegear-${version}-${arch}.spk *
-cp homegear.spk ../../../
+cp homegear-*.spk ../../../
 cd /synologyBuild
 rm -Rf Homegear-Synology-Package-master
