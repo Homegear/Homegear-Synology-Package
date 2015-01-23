@@ -26,7 +26,7 @@ version=`cat control | grep Version: | cut -d " " -f 2`
 arch=`cat control | grep Architecture: | cut -d " " -f 2`
 
 mkdir -p Package/lib/homegear
-echo "version=\"$version\"" >> SPK/INFO
+echo "version=\"${version}\"" >> SPK/INFO
 
 cp /usr/lib/pyshared/python2.7/lzo.so Package/lib/homegear
 find /lib -name libc.so.6 -exec cp {} Package/lib/homegear \;
