@@ -51,7 +51,7 @@ wget ftp://xmlsoft.org/libxml2/libxml2-git-snapshot.tar.gz
 tar -zxf libxml2-git-snapshot.tar.gz
 cd libxml2*
 ./configure
-sed -i "s/^LDFLAGS = /LDFLAGS = -Wl,-rpath=\/lib\/homegear /" Makefile
+sed -i "s/^LDFLAGS =/LDFLAGS = -Wl,-rpath=\/lib\/homegear /" Makefile
 make
 cp .libs/xmllint ../Package/lib/homegear
 cp .libs/libxml2.so.2 ../Package/lib/homegear
