@@ -30,7 +30,6 @@ echo "version=\"${version}\"" >> SPK/INFO
 
 cp /usr/lib/pyshared/python2.7/lzo.so Package/lib/homegear
 find /lib -name libc.so.6 -exec cp {} Package/lib/homegear \;
-find /lib -name libdl.so.2 -exec cp {} Package/lib/homegear \;
 find /lib -name libgcc_s.so.1 -exec cp {} Package/lib/homegear \;
 find /lib -name libgcrypt.so.11 -exec cp {} Package/lib/homegear \;
 find /lib -name libgpg-error.so.0 -exec cp {} Package/lib/homegear \;
