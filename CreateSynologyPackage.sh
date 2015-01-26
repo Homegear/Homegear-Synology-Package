@@ -29,11 +29,8 @@ mkdir -p Package/lib/homegear
 echo "version=\"${version}\"" >> SPK/INFO
 
 cp /usr/lib/pyshared/python2.7/lzo.so Package/lib/homegear
-find /lib -name libgcc_s.so.1 -exec cp {} Package/lib/homegear \;
 find /lib -name libgcrypt.so.11 -exec cp {} Package/lib/homegear \;
 find /lib -name libgpg-error.so.0 -exec cp {} Package/lib/homegear \;
-find /lib -name libm.so.6 -exec cp {} Package/lib/homegear \;
-find /lib -name libpthread.so.0 -exec cp {} Package/lib/homegear \;
 find /lib -name libreadline.so.6 -exec cp {} Package/lib/homegear \;
 find /lib -name libtinfo.so.5 -exec cp {} Package/lib/homegear \;
 find /lib -name libz.so.1 -exec cp {} Package/lib/homegear \;
