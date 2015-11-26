@@ -2,6 +2,14 @@
 
 # Run this script in a Debian wheezy debootstrap or docker environment for all three processor types used by Synology (armel, i386, amd64)
 
+if test -z $1; then
+	echo "Please provide a valid CPU architecture."	
+	print_usage
+	exit 1
+fi
+
+arch=$1
+
 download() {
 	wget http://homegear.eu/downloads/nightlies/$1
 	ar -x $1
@@ -21,16 +29,16 @@ unzip master.zip
 rm master.zip
 cd Homegear-Synology-Package-master/Template
 
-download libhomegear-base_current_debian_wheezy_armel.deb
+download libhomegear-base_current_debian_wheezy_${arch}.deb
 version=`cat control | grep Version: | cut -d " " -f 2`
 arch=`cat control | grep Architecture: | cut -d " " -f 2`
-download homegear_current_debian_wheezy_armel.deb
-download homegear-homematicbidcos_current_debian_wheezy_armel.deb
-download homegear-homematicwired_current_debian_wheezy_armel.deb
-download homegear-insteon_current_debian_wheezy_armel.deb
-download homegear-max_current_debian_wheezy_armel.deb
-download homegear-philipshue_current_debian_wheezy_armel.deb
-download homegear-sonos_current_debian_wheezy_armel.deb
+download homegear_current_debian_wheezy_${arch}.deb
+download homegear-homematicbidcos_current_debian_wheezy_${arch}.deb
+download homegear-homematicwired_current_debian_wheezy_${arch}.deb
+download homegear-insteon_current_debian_wheezy_${arch}.deb
+download homegear-max_current_debian_wheezy_${arch}.deb
+download homegear-philipshue_current_debian_wheezy_${arch}.deb
+download homegear-sonos_current_debian_wheezy_${arch}.deb
 
 mkdir -p Package/lib/homegear
 echo "version=\"${version}\"" >> SPK/INFO

@@ -5,6 +5,7 @@ CONFIGPATH=/etc/homegear
 DAEMON=/usr/bin/homegear
 PIDPATH=/var/run/homegear
 PIDFILE=$PIDPATH/homegear.pid
+STATICPATH=/usr/share/homegear
 DBPATH=/var/lib/homegear
 LOGPATH=/var/log/homegear
 
@@ -14,10 +15,10 @@ if [ -r /etc/default/homegear ]; then
         . /etc/default/homegear
 fi
 
-HOMEGEAR_OPTS="$HOMEGEAR_OPTS -d"
-
 RUNASUSER=homegear
 RUNASGROUP=homegear
+
+HOMEGEAR_OPTS="$HOMEGEAR_OPTS -u $RUNASUSER -g $RUNASGROUP -d"
 
 case $1 in
         start)
@@ -39,9 +40,9 @@ case $1 in
 			chmod 750 $DBPATH
 			chmod 640 $DBPATH/db.sql
 			chmod 550 $DBPATH/scripts
-			chmod 550 $DBPATH/firmware
-			chmod 440 $DBPATH/firmware/*
-			chmod 550 $DBPATH/firmware/GetFirmwareUpdates.sh
+			chmod 550 $STATICPATH/firmware
+			chmod 440 $STATICPATH/firmware/*
+			chmod 550 $STATICPATH/firmware/*.sh
 			chmod -R 550 $DBPATH/modules
 
 			if test ! -d $LOGPATH; then
@@ -50,32 +51,10 @@ case $1 in
 			chown -R $RUNASUSER:$RUNASGROUP $LOGPATH
 			chmod -R 750 $LOGPATH
 
-			if test ! -e /etc/homegear/devices/0/rf_s.xml; then
-				XMLLINT=0
-				if test ! -e /usr/bin/xmllint; then
-					XMLLINT=1
-					ln -s /lib/homegear/xmllint /usr/bin/xmllint
-				fi
-				PATCH=0
-				if test ! -e /usr/bin/patch; then
-					PATCH=1
-					ln -s /lib/homegear/patch /usr/bin/patch
-				fi
-				echo "Downloading device description files..."
-				/var/lib/homegear/GetDeviceFiles.sh 1
-				[ $? -ne 0 ] && exit 1
+			if test ! -e /usr/share/homegear/firmware/0000.00000069.fw; then
 				echo "Downloading current firmware updates..."
-				/var/lib/homegear/firmware/GetFirmwareUpdates.sh
-				[ $? -ne 0 ] && exit 1
-				if [ $XMLLINT -eq 1 ]; then
-					rm /usr/bin/xmllint
-				fi
-				if [ $PATCH -eq 1 ]; then
-					rm /usr/bin/patch
-				fi
+				$STATICPATH/firmware/GetFirmwareUpdatesHomeMaticBidCoS.sh
 			fi
-
-			$DAEMON -c $CONFIGPATH -s $RUNASUSER $RUNASGROUP
 
             $DAEMON -p $PIDFILE $HOMEGEAR_OPTS
             ;;
