@@ -1,8 +1,12 @@
 #!/bin/sh
 
+touch /tmp/moin1
+
 if [ "$SYNOPKG_PKG_STATUS" = "UPGRADE" ]; then
 	exit 0
 fi
+
+touch /tmp/moin2
 
 result=`id -u homegear 2>/dev/null`
 if [ "0$result" -eq "0" ]; then
@@ -25,16 +29,19 @@ if [ "0$result" -eq "0" ]; then
 	echo "homegear:*:$DATE:0:99999:7:::" >> /etc/shadow
 fi
 
+touch /tmp/moin3
+
 cp -R /var/packages/Homegear/target/etc/homegear /etc
 chown root:root -R /etc/homegear
 chmod 755 -R /etc/homegear
 find /etc/homegear -type f -exec chmod 644 {} \;
-cp -R /var/packages/Homegear/target/usr/bin/homegear /usr/bin
+cp /var/packages/Homegear/target/usr/bin/homegear /usr/bin
 chmod 755 /usr/bin/homegear
 chown root:root /usr/bin/homegear
 cp -R /var/packages/Homegear/target/usr/share/homegear /usr/share
 cp -R /var/packages/Homegear/target/var/lib/homegear /var/lib
 cp -R /var/packages/Homegear/target/lib/homegear /lib
+cp /var/packages/Homegear/target/usr/lib/libhomegear-base.so* /lib/homegear
 chown root:root -R /lib/homegear
 chmod 755 -R /lib/homegear
 
