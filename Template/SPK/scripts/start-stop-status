@@ -4,6 +4,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 CONFIGPATH=/etc/homegear
 DAEMON=/usr/bin/homegear
 PIDPATH=/var/run/homegear
+LOCKPATH=/run/lock
 PIDFILE=$PIDPATH/homegear.pid
 STATICPATH=/usr/share/homegear
 DBPATH=/var/lib/homegear
@@ -32,6 +33,11 @@ case $1 in
 			fi
 			chown -R $RUNASUSER:$RUNASGROUP $PIDPATH
 			chmod -R 750 $PIDPATH
+
+			if test ! -d $LOCKPATH; then 
+				mkdir -p $LOCKPATH
+			fi
+			chmod 777 $LOCKPATH
 
 			if test ! -d $DBPATH; then 
 				mkdir -p $DBPATH

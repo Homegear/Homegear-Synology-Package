@@ -5,10 +5,10 @@
 			"allUsers": true,
 			"title": "Homegear",
 			"desc": "Interface your HomeMatic BidCoS, HomeMatic Wired, MAX!, INSTEON or Philips hue devices with your home automation software or your own control scripts.",
-			"icon": "Homegear_{0}.png",
-			"protocol": "http",
+			"icon": "images/Homegear_{0}.png",
+			"protocol": "https",
 			"url": "/",
-			"port": "2001"
+			"port": "2002"
 		}
 	}
 }
