@@ -10,6 +10,7 @@ rm -Rf /lib/homegear
 rm -Rf /var/run/homegear
 rm -Rf /var/log/homegear
 rm -Rf /var/lib/homegear
+rm -Rf /usr/share/homegear
 rm -f /etc/logrotate.d/homegear
 rm -f /usr/local/etc/rc.d/homegear.sh
 rm -Rf /usr/syno/etc/packages/Homegear/
