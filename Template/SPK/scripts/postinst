@@ -1,12 +1,8 @@
 #!/bin/sh
 
-touch /tmp/moin1
-
 if [ "$SYNOPKG_PKG_STATUS" = "UPGRADE" ]; then
 	exit 0
 fi
-
-touch /tmp/moin2
 
 result=`id -u homegear 2>/dev/null`
 if [ "0$result" -eq "0" ]; then
@@ -28,8 +24,6 @@ if [ "0$result" -eq "0" ]; then
 	DATE=$(( $DATE / 60 / 60 / 24 ))
 	echo "homegear:*:$DATE:0:99999:7:::" >> /etc/shadow
 fi
-
-touch /tmp/moin3
 
 cp -R /var/packages/Homegear/target/etc/homegear /etc
 chown root:root -R /etc/homegear
