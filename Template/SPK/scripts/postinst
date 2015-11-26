@@ -41,9 +41,7 @@ chmod 755 -R /lib/homegear
 cp /var/packages/Homegear/target/etc/logrotate.d/homegear /etc/logrotate.d
 chown root:root /etc/logrotate.d/homegear
 chmod 644 /etc/logrotate.d/homegear
-chmod -R 550 /usr/share/homegear
 chmod -R 550 /var/lib/homegear/modules
-chmod 755 /var/lib/homegear/GetDeviceFiles.sh
 
 cp /var/packages/Homegear/target/lib/homegear/lzo.so /usr/lib/python2.7/lib-dynload
 chown root:root /usr/lib/python2.7/lib-dynload/lzo.so
@@ -83,8 +81,8 @@ mkdir -p /var/log/homegear
 chown homegear:homegear /var/log/homegear
 chmod 750 /var/log/homegear
 
-chown -R homegear:homegear /var/lib/homegear/firmware
-chmod -R 550 /var/lib/homegear/firmware
+chown -R homegear:homegear /usr/share/homegear
+chmod -R 550 /usr/share/homegear
 FILES=/var/lib/homegear/modules/*
 for f in $FILES; do
 	f2=`echo $f | sed 's#.*/##' | sed 's/^lib/mod_/'`
