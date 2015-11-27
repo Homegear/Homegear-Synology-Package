@@ -2,6 +2,11 @@
 
 # Run this script in a Debian wheezy debootstrap or docker environment for all three processor types used by Synology (armel, i386, amd64)
 
+print_usage() {
+	echo "Usage: CreateSynologyPackage.sh ARCH"
+	echo "  ARCH:           The CPU architecture (armhf, armel, arm64, i386, amd64 or mips)"
+}
+
 if test -z $1; then
 	echo "Please provide a valid CPU architecture."	
 	print_usage
