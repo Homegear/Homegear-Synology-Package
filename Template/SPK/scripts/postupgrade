@@ -98,4 +98,6 @@ cp /var/packages/Homegear/scripts/start-stop-status /usr/local/etc/rc.d/homegear
 chmod 755 /usr/local/etc/rc.d/homegear.sh
 chown root:root /usr/local/etc/rc.d/homegear.sh
 
+/usr/local/etc/rc.d/homegear.sh start
+
 exit 0
