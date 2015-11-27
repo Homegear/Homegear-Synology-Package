@@ -62,12 +62,10 @@ case $1 in
 				$STATICPATH/firmware/GetFirmwareUpdatesHomeMaticBidCoS.sh
 			fi
 
-            $DAEMON -p $PIDFILE $HOMEGEAR_OPTS
-            su -c "mv ${INSTALL_DIR}/.app/ ${INSTALL_DIR}/app/"
+			$DAEMON -p $PIDFILE $HOMEGEAR_OPTS
             ;;
         stop)
-			su -c "mv ${INSTALL_DIR}/app/ ${INSTALL_DIR}/.app/"
-            if test -e $PIDFILE; then
+			if test -e $PIDFILE; then
 	        	PID=`cat $PIDFILE`
 	        	PROCESSCOUNT=`ps | grep -c $PID`
 	        	if [ $PROCESSCOUNT -ne 1 ]; then
