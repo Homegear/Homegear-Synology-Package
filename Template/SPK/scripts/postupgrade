@@ -1,34 +1,98 @@
 #!/bin/sh
 
-cp -R /var/packages/Homegear/target/var/lib/homegear/* /var/lib/homegear
-rm /var/lib/homegear/modules/*
-FILES=/var/lib/homegear/modules/*
-for f in $FILES; do
-	f2=`echo $f | sed 's#.*/##' | sed 's/^lib/mod_/'`
-	mv $f /var/lib/homegear/modules/$f2
-done
-chown -R homegear:homegear /var/lib/homegear
-chmod 750 /var/lib/homegear
-chmod 644 /var/lib/homegear/*
-chmod -R 550 /var/lib/homegear/firmware
-chmod -R 550 /var/lib/homegear/modules
-chmod 755 /var/lib/homegear/GetDeviceFiles.sh
+result=`id -u homegear 2>/dev/null`
+if [ "0$result" -eq "0" ]; then
+	UID=100
+	x=1
+	while [ $x -ne 0 ] ; do
+	    UID=$(( $UID + 1))
+	    x=`cat /etc/passwd | cut -d: -f3 | grep -c ^${UID}$`
+	done
+	x=1
+	GID=100
+	while [ $x -ne 0 ] ; do
+	    GID=$(( $GID + 1))
+	    x=`cat /etc/group | cut -d: -f3 | grep -c ^${GID}$`
+	done
+	echo "homegear:x:$UID:$GID::/var/lib/homegear:/bin/false" >> /etc/passwd
+	echo "homegear:x:$GID:" >> /etc/group
+	DATE=`date +"%s"`
+	DATE=$(( $DATE / 60 / 60 / 24 ))
+	echo "homegear:*:$DATE:0:99999:7:::" >> /etc/shadow
+fi
 
+chown root:root -R /etc/homegear
+chmod 755 -R /etc/homegear
+find /etc/homegear -type f -exec chmod 644 {} \;
 cp /var/packages/Homegear/target/usr/bin/homegear /usr/bin
 chmod 755 /usr/bin/homegear
 chown root:root /usr/bin/homegear
+cp -R /var/packages/Homegear/target/usr/share/homegear /usr/share
+cp -R /var/packages/Homegear/target/lib/homegear /lib
+cp /var/packages/Homegear/target/usr/lib/libhomegear-base.so* /lib/homegear
+chown root:root -R /lib/homegear
+chmod 755 -R /lib/homegear
 
 cp /var/packages/Homegear/target/etc/logrotate.d/homegear /etc/logrotate.d
 chown root:root /etc/logrotate.d/homegear
-chmod 644 /logrotate.d/homegear
+chmod 644 /etc/logrotate.d/homegear
+chmod -R 550 /var/lib/homegear/modules
 
-rm -f /lib/homegear/*
-cp -R /var/packages/Homegear/target/lib/homegear/* /lib/homegear
-chown root:root -R /lib/homegear
-chmod 755 -R /lib/homegear
 cp /var/packages/Homegear/target/lib/homegear/lzo.so /usr/lib/python2.7/lib-dynload
 chown root:root /usr/lib/python2.7/lib-dynload/lzo.so
 chmod 755 /usr/lib/python2.7/lib-dynload/lzo.so
+
+chmod 440 /etc/homegear/rpcclients.conf
+chown homegear:homegear /etc/homegear/rpcclients.conf
+
+mkdir -p /var/run/homegear
+chown homegear:homegear /var/run/homegear
+chmod 750 /var/run/homegear
+
+mkdir -p /var/lib/homegear
+chown homegear:homegear /var/lib/homegear
+chmod 750 /var/lib/homegear
+
+if test ! -e /var/lib/homegear/scripts; then
+	rm -Rf /tmp/HomegearScriptsDir
+	[ $? -ne 0 ] && exit 1
+	mkdir /tmp/HomegearScriptsDir
+	[ $? -ne 0 ] && exit 1
+	wget -P /tmp/HomegearScriptsDir/ http://homegear.eu/downloads/Homegear_PHP_XMLRPC_Client.zip
+	[ $? -ne 0 ] && exit 1
+	unzip -d /tmp/HomegearScriptsDir /tmp/HomegearScriptsDir/Homegear_PHP_XMLRPC_Client.zip
+	[ $? -ne 0 ] && exit 1
+	rm /tmp/HomegearScriptsDir/Homegear_PHP_XMLRPC_Client.zip
+	mkdir -p /var/lib/homegear/scripts
+	[ $? -ne 0 ] && exit 1
+	mv /tmp/HomegearScriptsDir/* /var/lib/homegear/scripts
+	[ $? -ne 0 ] && exit 1
+	chown -R homegear:homegear /var/lib/homegear/scripts
+	chmod -R 550 /var/lib/homegear/scripts
+	rm -Rf /tmp/HomegearScriptsDir
+fi
+
+mkdir -p /var/log/homegear
+chown homegear:homegear /var/log/homegear
+chmod 750 /var/log/homegear
+
+chown -R homegear:homegear /usr/share/homegear
+chmod -R 550 /usr/share/homegear
+
+chown -R homegear:homegear /var/lib/homegear/modules
+chmod -R 550 /var/lib/homegear/modules
+
+if test ! -e /etc/homegear/homegear.crt; then
+	openssl genrsa -out /etc/homegear/homegear.key 2048
+	openssl req -batch -new -key /etc/homegear/homegear.key -out /etc/homegear/homegear.csr
+	openssl x509 -req -in /etc/homegear/homegear.csr -signkey /etc/homegear/homegear.key -out /etc/homegear/homegear.crt
+	rm /etc/homegear/homegear.csr
+	chown homegear:homegear /etc/homegear/homegear.key
+	chmod 400 /etc/homegear/homegear.key
+	openssl dhparam -check -text -5 1024 -out /etc/homegear/dh1024.pem
+	chown homegear:homegear /etc/homegear/dh1024.pem
+	chmod 400 /etc/homegear/dh1024.pem
+fi
 
 cp /var/packages/Homegear/scripts/start-stop-status /usr/local/etc/rc.d/homegear.sh
 chmod 755 /usr/local/etc/rc.d/homegear.sh
